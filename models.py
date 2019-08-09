@@ -6,14 +6,15 @@ class TrelloProject:
     def __init__(self, name, client):
         self.name = name
         self.client = client
-        self.boards = self.download_boards({})
+        self.boards = self.download_boards(boards={"nothing": None})
 
-    def download_boards(self, boards):
+    def download_boards(self, boards=None):
         if not boards:
             boards = self.boards
         ret = boards
-        for board in boards:
+        for board in self.client.list_boards():
             ret[board.id] = Board(board.name, board.id, board)
+        return ret
 
     def find_project(self):
         boards = self.client.list_boards()
@@ -42,7 +43,7 @@ class Board:
 
     def download_lists(self):
         ret = {}
-        for list in self.trello_lists:
+        for list in self.trello_board.open_lists():
             ret[list.id] = List(name=list.name, id=list.id, trello_list=list)
         return ret
 
@@ -94,7 +95,7 @@ class List:
         self.name = name
         self.id = id
         self.trello_list = trello_list
-        self.cards = self.download_cards(cards={})
+        self.cards = self.download_cards(cards={'nothing': None})
 
     def __str__(self):
         print(self.name)
@@ -103,8 +104,8 @@ class List:
         if not cards:
             cards = self.cards
         ret = cards
-        for card in self.trello_list.open_cards():
-            if not ret[card.id]:
+        for card in self.trello_list.list_cards():
+            if card.id not in ret:
                 ret[card.id] = Card(card.name, card.id, card, description=card.description)
         return ret
 

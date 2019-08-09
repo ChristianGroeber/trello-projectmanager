@@ -1,9 +1,9 @@
 import csv
 
 
-def read():
+def read(file):
     ret = []
-    with open('file.csv', 'r') as csvFile:
+    with open(file, 'r') as csvFile:
         reader = csv.reader(csvFile)
         for row in reader:
             ret.append(row)
