@@ -1,20 +1,24 @@
-from trello import ResourceUnavailable
-import trello
-
-
 class TrelloProject:
     def __init__(self, name, client):
         self.name = name
         self.client = client
         self.boards = self.download_boards(boards={"nothing": None})
+        print(self.boards[0], self.name)
 
     def download_boards(self, boards=None):
         if not boards:
             boards = self.boards
         ret = boards
         for board in self.client.list_boards():
-            ret[board.id] = Board(board.name, board.id, board)
+            if self.name in board:
+                ret[board.id] = Board(board.name, board.id, board)
         return ret
+
+    def get_simple_name_for_board(self, board):
+        arr_board = board.split()
+        for character in range(len(self.name)):
+            arr_board.pop(character)
+        print(arr_board)
 
     def find_project(self):
         boards = self.client.list_boards()
@@ -28,18 +32,25 @@ class TrelloProject:
                 return True
         return False
 
-    def add_board(self, board_name):
-        new_board = self.client.add_board(board_name)
+    def add_board(self, board_name, simple_name):
+        new_board = self.client.add_board(board_name, simple_name)
         self.boards[new_board.id] = Board(board_name, new_board.id, new_board)
 
 
 class Board:
-    def __init__(self, board_name, id, trello_board):
+    def __init__(self, board_name, simple_name, id, trello_board):
         self.id = id
         self.board_name = board_name
+        self.simple_name = simple_name  # the corresponding column in the table
         self.trello_board = trello_board
         self.trello_lists = trello_board.open_lists()
         self.lists = self.download_lists()
+
+    def get_simple_name_for_board(self, board, name):
+        arr_board = board.split()
+        for character in range(len(name)):
+            arr_board.pop(character)
+        print(arr_board)
 
     def download_lists(self):
         ret = {}
