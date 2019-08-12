@@ -12,13 +12,21 @@ class Trello:
         self.file = os.path.join("csv", name + "." + extension)
         self.client = auth.authorize()
         self.project = models.TrelloProject(self.name, self.client)
+        self.csv = None
 
     def add_board_from_csv(self, file):
         head = csv_reader.read(file)[0]
-        for board in head[0].split(self.separator):
+        for board in head:
             full_board = self.name + " - " + board
             if "NR" not in str(board) and "id" not in str(board):
                 self.project.add_board(full_board, board)
+
+    def add_list_from_csv(self, file):
+        lists = []
+        if self.csv is not None:
+            for line in self.csv:
+                for item in line:
+                    pass
 
 
 name = input("please enter the project's name (and make sure the file has the same name)")
