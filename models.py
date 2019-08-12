@@ -6,19 +6,17 @@ class TrelloProject:
         print(self.boards[0], self.name)
 
     def download_boards(self, boards=None):
+        """
+        Gets all boards that belong to a Trello Project
+        :return: dictionary with board objects
+        """
         if not boards:
             boards = self.boards
         ret = boards
         for board in self.client.list_boards():
             if self.name in board:
-                ret[board.id] = Board(board.name, board.id, board)
+                ret[board.id] = Board(board.name, self.get_simple_name_for_board(board.name), board.id, board)
         return ret
-
-    def get_simple_name_for_board(self, board):
-        arr_board = board.split()
-        for character in range(len(self.name)):
-            arr_board.pop(character)
-        print(arr_board)
 
     def find_project(self):
         boards = self.client.list_boards()
@@ -34,7 +32,22 @@ class TrelloProject:
 
     def add_board(self, board_name, simple_name):
         new_board = self.client.add_board(board_name, simple_name)
-        self.boards[new_board.id] = Board(board_name, new_board.id, new_board)
+        self.boards[new_board.id] = Board(board_name, self.get_simple_name_for_board(board_name), new_board.id, new_board)
+
+    def get_simple_name_for_board(self, board_name):
+        """
+        Gets the simple name (corresponding column in the table) for a board
+        :param board_name: <project_name> - <column_name>
+        :return: boolean
+        """
+        arr_board = board_name.split()
+        if str(arr_board[0]) == self.name:
+            arr_board.pop(0)
+            arr_board.pop(0)
+            arr_board = ''.join(arr_board)
+            return arr_board
+        else:
+            return KeyError
 
 
 class Board:
@@ -46,11 +59,11 @@ class Board:
         self.trello_lists = trello_board.open_lists()
         self.lists = self.download_lists()
 
-    def get_simple_name_for_board(self, board, name):
-        arr_board = board.split()
-        for character in range(len(name)):
-            arr_board.pop(character)
-        print(arr_board)
+    def get_simple_name(self):
+        arr_board = self.board_name.split()
+        arr_board.pop(0)
+        arr_board.pop(0)
+        return ''.join(arr_board)
 
     def download_lists(self):
         ret = {}
@@ -116,8 +129,7 @@ class List:
             cards = self.cards
         ret = cards
         for card in self.trello_list.list_cards():
-            if card.id not in ret:
-                ret[card.id] = Card(card.name, card.id, card, description=card.description)
+            ret[card.id] = Card(card.name, card.id, card, description=card.description)
         return ret
 
     def add_card(self, card_name):
