@@ -5,6 +5,16 @@ class TrelloProject:
         self.boards = self.download_boards(boards={"nothing": None})
         print(self.boards[0], self.name)
 
+    def get_board(self, board_name):
+        """
+        Gets a board by it's name
+        :param board_name:
+        :return: Board
+        """
+        for board in self.boards:
+            if board_name in board:
+                return board
+
     def download_boards(self, boards=None):
         """
         Gets all boards that belong to a Trello Project

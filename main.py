@@ -18,15 +18,16 @@ class Trello:
         head = csv_reader.read(file)[0]
         for board in head:
             full_board = self.name + " - " + board
-            if "NR" not in str(board) and "id" not in str(board):
+            if "NR" not in str(board) and "id" not in str(board) and "Anforderung" not in str(board):
                 self.project.add_board(full_board, board)
 
     def add_list_from_csv(self, file):
         lists = []
-        if self.csv is not None:
+        if self.csv is None:
             for line in self.csv:
-                for item in line:
-                    pass
+                for item, key in line:
+                    board = self.project.get_board(line[0][key])
+                    print(board)
 
 
 name = input("please enter the project's name (and make sure the file has the same name)")
@@ -38,16 +39,4 @@ if not separator:
     separator = ","
 project = Trello(name, extension, separator)
 # project.add_board_from_csv(project.file)
-
-
-# lines = csv_reader.read()
-# for line in lines:
-#     category = line[2]
-#     print(category)
-#     if not my_board.check_if_list_is_in_board(category):
-#         print("adding " + category + " to trello")
-#         my_board.add_list(category)
-#
-# for card in lines:
-#     if not my_board.check_if_card_in_list(card[1], card[2]):
-#         my_board.get_list(card[2]).add_card(name=card[1])
+project.add_list_from_csv(project.file)
