@@ -72,4 +72,4 @@ if not separator:
     separator = ","
 project = Trello(name, extension, separator)
 # project.add_board_from_csv(project.file)
-project.add_list_from_csv(project.file)
+project.add_list_from_csv()

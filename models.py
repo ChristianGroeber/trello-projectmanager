@@ -15,7 +15,9 @@ class TrelloProject:
                 return board
 
     def get_board_from_simple_name(self, simple_name):
-        return self.get_board(simple_name + " - " + self.name)
+        ret = self.get_board(simple_name)
+        print(ret)
+        return ret
 
     def download_boards(self, boards=None):
         """
