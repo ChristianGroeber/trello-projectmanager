@@ -21,13 +21,46 @@ class Trello:
             if "NR" not in str(board) and "id" not in str(board) and "Anforderung" not in str(board):
                 self.project.add_board(full_board, board)
 
-    def add_list_from_csv(self, file):
-        lists = []
-        if self.csv is None:
-            for line in self.csv:
-                for item, key in line:
-                    board = self.project.get_board(line[0][key])
-                    print(board)
+    def csv_as_dict(self):
+        self.csv = csv_reader.read(self.file, self.separator)
+        boards = {}
+        for board in range(len(self.csv[0])):
+            boards[board] = []
+        for y in range(len(self.csv)):
+            for x in range(len(self.csv[y])):
+                if not y == 0:
+                    boards[x].append(self.csv[y][x])
+        dict_len = len(boards.keys())
+        for z in range(dict_len):
+            if len(boards[z]) == 0:
+                boards.pop(z)
+            else:
+                # before, the list is just a number, now that number gets replaced by the list's name.
+                boards[self.csv[0][z]] = boards[z]
+                boards.pop(z)
+        return boards
+
+    def add_list_from_csv(self):
+        cols_to_ignore = ["NR", "Anforderung"]
+        boards = self.csv_as_dict()
+        print(boards)
+        for board in boards:
+            print(boards[board])
+            boards[board] = list(dict.fromkeys(boards[board]))
+        print(boards)
+        for board in boards:
+            for my_list in boards[board]:
+                trello_board = self.project.get_board_from_simple_name(board)
+                trello_board.add_list(my_list)
+
+    def add_cards_from_csv(self):
+        boards = self.csv_as_dict()
+        cards = boards['Anfoderung']
+        for card in range(len(cards)):
+            print(cards[card])
+            for board in boards:
+                list_to_add_to = boards[board][card]
+                print(list_to_add_to)
 
 
 name = input("please enter the project's name (and make sure the file has the same name)")

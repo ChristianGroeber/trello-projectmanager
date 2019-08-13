@@ -3,7 +3,6 @@ class TrelloProject:
         self.name = name
         self.client = client
         self.boards = self.download_boards(boards={"nothing": None})
-        print(self.boards[0], self.name)
 
     def get_board(self, board_name):
         """
@@ -15,6 +14,9 @@ class TrelloProject:
             if board_name in board:
                 return board
 
+    def get_board_from_simple_name(self, simple_name):
+        return self.get_board(simple_name + " - " + self.name)
+
     def download_boards(self, boards=None):
         """
         Gets all boards that belong to a Trello Project
@@ -24,7 +26,7 @@ class TrelloProject:
             boards = self.boards
         ret = boards
         for board in self.client.list_boards():
-            if self.name in board:
+            if self.name in board.name:
                 ret[board.id] = Board(board.name, self.get_simple_name_for_board(board.name), board.id, board)
         return ret
 
@@ -51,6 +53,7 @@ class TrelloProject:
         :return: boolean
         """
         arr_board = board_name.split()
+        print(arr_board)
         if str(arr_board[0]) == self.name:
             arr_board.pop(0)
             arr_board.pop(0)
