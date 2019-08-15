@@ -2,7 +2,7 @@ class TrelloProject:
     def __init__(self, name, client):
         self.name = name
         self.client = client
-        self.boards = self.download_boards(boards={"nothing": None})
+        self.boards = self.download_boards()
 
     def get_board(self, board_name):
         """
@@ -19,17 +19,17 @@ class TrelloProject:
         print(ret)
         return ret
 
-    def download_boards(self, boards=None):
+    def download_boards(self):
         """
         Gets all boards that belong to a Trello Project
         :return: dictionary with board objects
         """
-        if not boards:
-            boards = self.boards
-        ret = boards
+        ret = {}
         for board in self.client.list_boards():
+            print(board)
             if self.name in board.name:
                 ret[board.id] = Board(board.name, self.get_simple_name_for_board(board.name), board.id, board)
+        print(ret)
         return ret
 
     def find_project(self):
@@ -125,7 +125,7 @@ class Board:
 
     def add_list_from_dict(self, lists):
         for my_list in lists:
-            self.add_list(lists[my_list])
+            self.add_list(lists)
 
     def delete_all_lists(self):
         for list in self.trello_lists:
