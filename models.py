@@ -123,6 +123,10 @@ class Board:
         self.trello_lists = self.get_board().open_lists()
         self.lists[new_list.id] = List(list_name, new_list.id, trello_list=new_list)
 
+    def add_list_from_dict(self, lists):
+        for my_list in lists:
+            self.add_list(lists[my_list])
+
     def delete_all_lists(self):
         for list in self.trello_lists:
             print("deleting" + list.name)

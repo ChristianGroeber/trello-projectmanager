@@ -30,12 +30,16 @@ class CsvTests(unittest.TestCase):
             else:
                 boards[self.csv[0][z]] = boards[z]
                 boards.pop(z)
+        print('######################################\nstep 1\n####################################3')
         print(boards)
         for board in boards.keys():
             print(board)
             boards[board] = list(dict.fromkeys(boards[board]))
+        print('######################################\nstep 2\n####################################3')
         print(boards)
+        print('######################################\nstep 3\n####################################3')
         for board in boards:
+            print('-----------------------printing lists for board ' + board + '------------------------------')
             for my_list in boards[board]:
                 print(my_list)
 

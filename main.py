@@ -43,15 +43,18 @@ class Trello:
     def add_list_from_csv(self):
         cols_to_ignore = ["NR", "Anforderung"]
         boards = self.csv_as_dict()
-        print(boards)
+        trello_boards = self.project.boards
         for board in boards:
-            print(boards[board])
-            boards[board] = list(dict.fromkeys(boards[board]))
+            print(board)
+            boards[board] = list(dict.fromkeys(board))
         print(boards)
+        for board in trello_boards:
+            for trello_list in board.trello_board.open_lists():
+                trello_list.close()
         for board in boards:
-            for my_list in boards[board]:
+            if board not in cols_to_ignore:
                 trello_board = self.project.get_board_from_simple_name(board)
-                trello_board.add_list(my_list)
+                trello_board.add_list_from_dict(boards[board])
 
     def add_cards_from_csv(self):
         boards = self.csv_as_dict()
